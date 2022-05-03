@@ -1,3 +1,6 @@
+variables:
+- group: Databricks-environment
+
 trigger:
   batch: true
   branches:
@@ -19,7 +22,7 @@ stages:
   jobs:
   - job: onPushJob
     pool:
-      vmImage: 'ubuntu-18.04'
+      vmImage: 'ubuntu-latest'
 
     steps:
     - script: env | sort
@@ -39,12 +42,9 @@ stages:
         python -m pip install --upgrade pip
         pip install databricks_cli
       displayName: 'Install dependencies'
-
     - script: |
         python deploy/deploy.py  --branch_name $(Build.SourceBranchName) --pr_branch $(System.PullRequest.SourceBranch)
       env:
         DATABRICKS_HOST: $(DATABRICKS_HOST)
         DATABRICKS_TOKEN: $(DATABRICKS_TOKEN)
       displayName: 'Run integration test on Databricks'
-
-
